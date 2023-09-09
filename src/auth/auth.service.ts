@@ -21,11 +21,14 @@ export class AuthService {
   async signInUser(
     authCredentialDto: AuthCredentialsDto
   ): Promise<{ token: string }> {
-    const { userName, password } = authCredentialDto;
+    const { username, password } = authCredentialDto;
 
-    const user = await this.userRepository.findOne({ where: { userName } });
+    // const query = this.userRepository.createQueryBuilder("user");
+    // query.andWhere("user.username LIKE :search", { search: username });
+    const user = await this.userRepository.findOne({ where: { username } });
+
     if (user && (await bcrypt.compare(password, user.password))) {
-      const payload: JwtPayload = { userName };
+      const payload: JwtPayload = { username };
       const token: string = await this.jwtService.sign(payload);
 
       return { token };
